@@ -4,3 +4,4 @@ import asyncio
 sT = sensor_T(None)
 T = sT.read()
 print(T)
+print("hello")
