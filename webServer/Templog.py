@@ -5,7 +5,7 @@ import time
 sT = sensor_T(None)
 
 
-for i in range(10):
+for i in range(0,20,5):
     T = sT.read()
     print(i,T)
     time.sleep(5)
