@@ -18,6 +18,6 @@ with open('data.csv','w') as f:
         time.sleep(5)
 
         if T <= 25:
-            ledPix setColor((0,0,255)):
+            ledPix setColor((0, 0, 255))
 
 print("done")
