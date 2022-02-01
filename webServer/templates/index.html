@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <title> piSensors </title>
+  <title> Light Bar </title>
   <style>
     #ws-status {
       background-color: #faa;
@@ -13,53 +13,8 @@
     input[type=number]{
       width: 5em;
     }
-    .sensorBlock {
-      border: 1px solid red;
-      background-color: khaki;
-      width: 90%;
-    }
-    #logGraph {
-      /* padding-top: 1em;
-      padding-bottom: 1em; */
-      width:100%;
-    }
-    #logData {
-      width: 100%;
-      padding-top: 2em;
-    }
-    .timerBar {
-      width: 100%;
-      height: 1em;
-      background-color: yellow;
-
-    }
-    #countdownT {
-      width: 100%;
-      border: 1px solid black;
-      text-align: right;
-    }
-
-    .inputBlock{
-      background-color: lavender;
-      border: 1px solid red;
-      width: 50%;
-    }
-    .item{
-      border: 1px solid black;
-      border-radius: 3px;
-      padding-left: 5px;
-    }
-    .myButton{
-      border: 3px inset #1e5ad2;
-      background: linear-gradient(to top, #63B8EE, #468CCF);
-      /* background-color: #3f68b9; */
-      border-radius: 2px;
-      margin: 2px;
-      cursor: pointer;
-    }
-    .myButton:hover {
-      border: 3px outset chocolate;
-      background: linear-gradient(to top, #468CCF, #63B8EE);
+    .flagButton{
+      border: 1px solid blue;
     }
   </style>
 
@@ -70,98 +25,78 @@
 Connection: <span id="ws-status"> Waiting... </span>
 <div id='errorInfo'></div>
 
-Info:<span id="info">Hi</span>
-
-<input type="button" id="hello" value="Hello World">
-<span id="HelloResponse"></span>
-
-<div class="inputBlock">
-  LED's: <input type="checkbox" id="hasLEDs" checked>
-  <br>
-  <div class="ledControls">
-    # of LEDs: <input type="number" id="nPix" value="3"><input type="button" id="nPixSet" value="Set">
-  </div>
-  <div class="ledControls">
-    Min/Max:
-    <input type="number" id="ledMin" value="10" class="ledMinMax"> /
-    <input type="number" id="ledMax" value="30" class="ledMinMax">
-    <span id="ledMinMaxError"></span>
-  </div>
+<div id="controlFlags">
+  <!-- The prefix of the flag name should be the same as the prefix of the div with the controls -->
+  <!-- LED STRIP (1/2) -->
+  <input type="button" id="LED_FLAG" class="flagButton" value="LED">
+  <!-- LED STRIP (END) -->
 </div>
 
-<p>
-  <div class="inputBlock">
-    Timer: <input type="checkbox" id="timerCheck">
-    <br>
-    <div class="timer" hidden>
-      <input type="button" id="timer" value="Start Timer">
-      <input type="number" id="timerMin" min="0" value="0" title="minutes">min
-      <input type="number" id="timerSec" min="0" value="0" title="seconds">sec
-      <span id="timeLeft"></span>
-    </div>
-  </div>
-<p>
-
-<!-- TEMPERATURE SENSOR -->
+<!-- LED STRIP (2/2)-->
+<!-- div id should have the same prefix as the flag -->
+<div id="LED_CONTROLS">
+  <label for="nPix"># of Pixels:</label> <input type='number' id='nPix' value='20'>
   <p>
-  <input type="button" id="checkSensor" value="Check Temperature">
-    <div id="SensorResponse">
-      <span id="sensor_measure"></span><br>
-      <span id="sensor_time"></span>
-    </div>
-    <p>
+    <input type="button" id="clearButton" value="Turn off LEDs">
 
-<input type="button" id="monitorSensor" value="Monitor">
-<input type="number" id="monitorSec" value="1" title="timestep (sec)">sec
+  <p>
+    <input type="button" id="rainbowButton" value="Rainbow">
+    <input type="number" id="rainbowCount" min="1" value="2">
+    <input type="number" id="rainbowSpeed" min="1" value="0.01">
+    <br>
+    <input type="button" id="rainbowForever" value="Rainbow Forever">
+
+  <p>
+    <input type="button" id="timer" value="Start Countdown">
+    <input type="number" id="timerMin" min="0" value="0" title="minutes">
+    <input type="number" id="timerSec" min="0" value="20" title="seconds">
+    <span id="timeLeft"></span>
+
+  <p>
+  Pick Color:
+  <input type="color" id="setColor" value="#ff0000">
+  <p>
+  Brightness:
+  <input type="range" id="setBrightness" min="0" max="100" step="1" value="100">
+
+  <br>
+  <input type="button" id="blueButton" value="Blue">
+
+
+  <div id='signal'></div>
+  <br>
+  <input type="button" id="interruptButton" value="Interrupt">
+  <p>
+</div>
+<!-- LED STRIP (END) -->
+<hr>
 
 <p>
-<div class="sensorBlock">
-  <span id="loggingMenu" class="myButton">Logging ^</span>
-  <div class="logging">
-    <input type="button" id="startLog" value="Start Logging">
-
-    <div> Log timestep (dt):
-      <input type="number" id="logT_dtMin" min="0" value="0" title="minutes">min,
-      <input type="number" id="logT_dtSec" min="0" value="1" title="seconds">sec,
-      <input type="number" id="logT_dtMil" min="0" value="0" title="millisecs">ms.
-    </div>
-
-    Set End Time: <input id="setEnd" type="checkbox" title="Set time limit to end logging">,
-    <div id="logTimeLimit" hidden> Log Time:
-      <input type="number" id="logT_timeMin" min="0" value="1" class="logEndTime" title="minutes">min
-      <input type="number" id="logT_timeSec"  min="0" value="0" class="logEndTime" title="seconds">sec
-    </div>
-
-
-    <div id="io" class="item">
-      <span id="getDataMenu" class="myButton">Get Data ▼</span>
-      <div id="getDataCtrls" hidden>
-        <input type="button" id="getData" value="Get Data">
-        <input type="text" id="saveFileName">
-        <input type="button" id="saveData" value="Save Data To File">
-      </div>
-    </div>
-
-    <div id="countdownT">
-      <div id="timeLeftT" class="timerBar"></div>
-      <div id="countdownData"></div>
-    </div>
-    <p>
-    <div id="graphCtrls"></div>
-    <div id="logGraph"></div>
-    <p>
-    <div id="logData"></div>
-  </div>
+  <input type="button" id="sin3Phase" value="sin: 3 phase preset">
+</p>
+<p>
+<div class="circBlock">
+  <input type="button" id="sinX" value="sin(x)">
+  <input type="number" id="sinXFreq" min="0" value="1" title="frequency">
+  <input type="number" id="sinXPhase" min="0" value="0" title="phase">
+  <input type="color" id="sinXColor" value="#ff0000">
+<p>
+  <b>Live</b>:<br>
+  Frequency: <input type="number" id="sinXFreqLive" min="0" value="1" title="frequency"><br>
+  Phase: <input type="range" id="sinXPhaseLive" min="-1" max="1" step="0.01" value="0" title="phase">
+  <input type="color" id="sinXColorLive" value="#ff0000">
+</p>
 </div>
-<!-- TEMPERATURE SENSOR (END) -->
+</p>
 
+
+<input type="button" id="restart" value="Restart Server">
 <br>
 <input type="button" id="reboot" value="Reboot Pi">
-<br>
+
 
 <!-- Scripts -->
 <script src="{{ static_url("jquery-3.4.1.min.js") }}"></script>
-<script src="{{ static_url("plotly-latest.min.js") }}"></script>
 <script src="{{ static_url("ws-client.js") }}"></script>
 
 </body>

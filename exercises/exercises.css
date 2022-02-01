@@ -1,0 +1,89 @@
+.answer{
+  position: relative;
+  left: 2em;
+}
+.notes {
+  position: relative;
+  left: 2em;
+  width: 90%;
+}
+.solution {
+  background-color: lightGreen;
+  padding: 1em;
+  position: relative;
+  left: 2em;
+}
+.toggle-next {
+  width: 12em;
+  margin: 2px;
+  color: blue;
+}
+.toggle-next:hover {
+  cursor: pointer;
+  background-color: #bbbbff;
+}
+.answers {
+  position: relative;
+  left: 2em;
+  margin-bottom: 1em;
+  border: 1px solid blue;
+}
+.intro {
+  position: relative;
+  left: 2em;
+}
+.exercise {
+  margin-top: 1em;
+}
+code {
+  user-select: none;
+  font-weight: bold;
+  font-size: 1.25em;
+}
+body {
+  font-family: Georgia, sans-serif;
+  width: 90%;
+}
+
+.led {
+  position: relative;
+  border: 1px solid black;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.importantEqn {
+  background-color: yellow;
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  text-align: right;
+}
+
+pre {
+  width: 80%;
+}
+
+h2 {
+  text-align: center;
+}
+h3 {
+  postion: relative;
+  margin-left: 2em;
+}
+
+td {
+  border: 1px solid black;
+  padding: 0.5em;
+  text-align: center;
+}
+
+figure {
+  border: 3px inset green;
+  text-align: center;
+  font-style: italic;
+}

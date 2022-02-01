@@ -17,43 +17,35 @@ import argparse
 import asyncio
 #from numpy import arange, mean
 import numpy as np
-
-#from ledController import *
-#from ledPixels import *
 #from oledU import *
-from basic import *
 
-from wsBroadcasterU import *
-wsCast = wsBroadcasterU()
 
-# LEDs (1/2)
-try:
-	from ledPixels import *
+# LED STRIP (1/3)
 
-	nPix = 20
-	ledPin = board.D18
+from ledPixels import *
 
-	# get number of pixels from the command line
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-n", "--nPix", help = "Number of pixels")
-	args = parser.parse_args()
+nPix = 20
+ledPin = board.D18
 
-	if args.nPix:
-		try:
-			nPix = int(args.nPix)
-		except:
-			print("using default (20) pixels: -nPix 20")
-	ledPix = ledPixels(nPix, ledPin)
-except:
-	ledPix = False
-print("ledPix:", ledPix)
-# LED's (END)
+# get number of pixels from the command line
+parser = argparse.ArgumentParser()
+parser.add_argument("-n", "--nPix", help = "Number of pixels")
+args = parser.parse_args()
 
-# TEMPERATURE SENSOR (1/2)
-from sensor_T import *
-sensor = sensor_T(wsCast=wsCast, ledPix=ledPix)
-# TEMPERATURE SENSOR (END)
+if args.nPix:
+	try:
+		nPix = int(args.nPix)
+	except:
+		print("using default (20) pixels: -nPix 20")
 
+
+#Initialize neopixels
+ledPix = ledPixels(nPix, ledPin)
+
+# LED STRIP (END)
+
+
+#oled = oledU(128,32)
 
 #Tornado Folder Paths
 settings = dict(
@@ -64,10 +56,7 @@ settings = dict(
 #pyPath = '/home/pi/rpi-led-strip/pyLED/'
 
 #Tonado server port
-PORT = 8050
-
-# Log file folder
-logDir = "./logs/"
+PORT = 8040
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -77,21 +66,9 @@ class MainHandler(tornado.web.RequestHandler):
 
 class WSHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
-		wsCast.append(self)
-		sensor.server = self
-		print("open wsCast:", wsCast)
 		print ('[WS] Connection was opened.')
 		self.write_message('{"who": "server", "info": "on"}')
 		#self.oled = oledU(128,32)
-
-		# LEDs
-		if ledPix:
-			self.write_message({"info": "LEDsActive", "active": "show", "nPix": nPix})
-			print("LED's Active")
-		else:
-			self.write_message({"info": "LEDsActive", "active": "hide"})
-			print("LED's Inactive")
-		# LEDs (END)
 
 
 	async def on_message(self, message):
@@ -102,89 +79,101 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 				if msg["opts"] == "off":
 					sys.exit("Stopping server")
 
-			# TEMPERATURE SENSOR (2/2)
-			global sensor
-			if msg["what"] == "checkS":
-				asyncio.create_task(sensor.aRead())
+			# LED STRIP (2/3)
 
-			if msg["what"] == 'monitor':
-				sensor.cancelTask()
-				dt = float(msg['dt'])
-				sensor.task = asyncio.create_task(sensor.aMonitor(dt))
+			if msg["what"] == "nPix":
+				print("Resetting nPix")
+				global ledPix
+				ledPix.cancelTask()
+				n = int(msg["n"])
+				ledPix = ledPixels(n, ledPin)
+				ledPix.initCodeColor()
 
-			if msg["what"] == "startLog":
-				sensor.cancelTask()
-				if msg["t"]:
-					t = float(msg["t"])
-				else:
-					t = False
-				dt = float(msg["dt"])
-				update = msg["update"]
-				print("msg:", msg)
-				sensor.task = asyncio.create_task(sensor.aLog( t, dt, update))
+			if msg["what"] == "clearButton":
+				print("Clearing LEDs ")
+				ledPix.cancelTask()
+				ledPix.clear()
+				self.write_message({"info":"cleared"})
 
-			if msg["what"] == "stopLog":
-				sensor.cancelTask()
-				fname = logDir + msg["fname"]
-				await sensor.aSaveLog(fname)
+			if msg["what"] == "rainbowButton":
+				print("rainbow LEDs ")
+				ledPix.cancelTask()
+				n = int(msg["ct"])
+				s = float(msg["speed"])
+				task = asyncio.create_task(ledPix.aRainbow(n, s))
+				ledPix.task = task
 
-			if msg["what"] == "save":
-				fname = logDir + msg["fname"]
-				if sensor:
-					await sensor.aSaveLog(fname)
+			if msg["what"] == "rainbowForever":
+				print("rainbow LEDs (forever) infinite loop")
+				ledPix.cancelTask()
+				s = float(msg["speed"])
+				task = asyncio.create_task(ledPix.aRainbowForever(s))
+				ledPix.task = task
 
-			if msg["what"] == "getData":
-				if sensor:
-					await sensor.aGetData()
+			if msg["what"] == "setColor":
+				ledPix.cancelTask()
+				col = msg["color"]
+				ledPix.setColor(col)
 
+			if msg["what"] == "setBrightness":
+				bright = msg["brightness"]
+				ledPix.setBrightness(bright)
 
-			# TEMPERATURE SENSOR (END)
+			if msg["what"] == "interruptButton":
+				ledPix.cancelTask()
 
-			# LEDs
-			if msg["what"] == "LEDs":
+			if msg["what"] == "blueButton":
+				print("blue LEDs ")
+				ledPix.cancelTask()
+				ledPix.blue()
 
-				if msg["activate"]:
-					if ledPix:
-						nPix = msg["nPix"]
-						print(f'Activating {nPix} neoPixels')
-				else:
-					print(f'Deactivating LEDs')
+			if msg["what"] == "sin3Phase":
+				print("sin 3 phase (sinForever2.py -x 72 -f 5 -b 0.5 -s 0.0005) ")
+				ledPix.cancelTask()
+				ledPix.brightness = 0.5
+				ledPix.threeSins(freq=5, speed=0.0005)
 
-			if msg["what"] == "nPixSet":
-
-				if ledPix:
-					nPix = int(msg["nPix"])
-					print(f'Activating {nPix} neoPixels')
-					ledPix.clear()
-					ledPix.nPixSet(nPix)
-					ledPix.initCodeColor()
-
-			if msg["what"] == "ledMinMax":
-				print("ledMinMax", msg)
-				if ledPix:
-					minVal = float(msg["min"])
-					maxVal = float(msg["max"])
-					ledPix.setupScale(minVal=minVal, maxVal=maxVal, color=(0,100,0))
-
+			if msg["what"] == "sinX":
+				print("sin(x) ")
+				ledPix.cancelTask()
+				f = float(msg["freq"])
+				p = float(msg["phase"])
+				col = msg["color"]
+				task = asyncio.create_task( ledPix.aSin(f, p, col))
+				ledPix.task = task
 
 
-			# LEDs (END)
+			if msg["what"] == "sinXPhaseLive":
+				#print("sin(x) ")
+				if ledPix.task:
+					ledPix.cancelTask()
+				f = float(msg["freq"])
+				p = float(msg["phase"])
+				col = msg["color"]
+				ledPix.sin(f, p, col)
+				ledPix.pixels.show()
 
+			# LED STRIP (END)
 
-
-			if msg["what"] == "hello":
-				r = 'Say what?'
-				self.write_message({"info": "hello", "reply":r})
-
+			# TIMER
 			if msg["what"] == "timer":
+				ledPix.cancelTask()
 				m = float(msg["minutes"])
 				s = float(msg["seconds"])
-				task = asyncio.create_task(basicTimer(self, m, s))
+				task = asyncio.create_task(ledPix.aTimer(self, m, s))
+				ledPix.task = task
+			# TIMER (END)
 
+			if msg["what"] == "restart":
+				ledPix.clear()
+				subprocess.Popen('sleep 5 ; sudo python3 '+os.path.join(os.path.dirname(__file__), "server.py" + f' -n {nPix}'), shell=True)
+				main_loop.stop()
 
 			if msg["what"] == "reboot":
+				ledPix.clear()
 				subprocess.Popen('sleep 5 ; sudo reboot', shell=True)
 				main_loop.stop()
+
 
 
 		except Exception as e:
@@ -194,8 +183,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
 	def on_close(self):
-		wsCast.remove(self)
 		print ('[WS] Connection was closed.')
+
+
+async def measure():
+	print("measuring")
+
 
 
 application = tornado.web.Application([
@@ -213,6 +206,12 @@ if __name__ == "__main__":
 
 		print ("Tornado Server started")
 
+		# LED STRIP (3/3)
+
+		ledPix.initCodeColor()
+
+		# LED STRIP (END)
+
 		# get ip address
 		cmd = "hostname -I | cut -d\' \' -f1"
 		IP = subprocess.check_output(cmd, shell=True).decode("utf-8")
@@ -223,17 +222,13 @@ if __name__ == "__main__":
 		#oled.write(wifi, 2)
 		print(wifi)
 
-		if ledPix:
-			ledPix.light(0, (0,0,100))
-
 		main_loop.start()
 
 
 
 
 	except:
-		if ledPix:
-			ledPix.clear()
 		print ("Exception triggered - Tornado Server stopped.")
+		ledPixels.clear()
 
 #End of Program
