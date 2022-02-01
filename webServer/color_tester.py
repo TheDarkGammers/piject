@@ -11,7 +11,7 @@ ledPix = ledPixels(20, board.D18)
 print("start")
 
 for i in range(0,10,1):
-    ledPix.setColor((255, 153, 0,))
+    ledPix.setColor((255, 69, 0,))
     time.sleep(1)
 
 
