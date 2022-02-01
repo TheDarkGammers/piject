@@ -15,7 +15,7 @@ with open('data.csv','w') as f:
         T = sT.read()
         print(i,T)
         f.write(f"{i},{T}\n")
-        time.sleep(5)
+
 
         if T <= 20:
             ledPix.setColor((0, 0, 255))
@@ -23,7 +23,7 @@ with open('data.csv','w') as f:
             ledPix.setColor((255, 0, 0,))
         else:
             ledPix.setColor((255, 40, 0,))
-
+        time.sleep(5)
 
 
 ledPix.setColor((0, 0, 0,))
