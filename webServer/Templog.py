@@ -19,5 +19,9 @@ with open('data.csv','w') as f:
 
         if T <= 25:
             ledPix.setColor((0, 0, 255))
+        else: ledPix.setColor((255, 153, 51,))
+
+        if T >= 30:
+            ledPix.setColor((255, 0, 0,))
 
 print("done")
