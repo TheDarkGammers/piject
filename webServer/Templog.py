@@ -4,6 +4,9 @@ import time
 import neopixel
 from ledPixels import *
 
+def F(T):
+     return T*9/5+32
+
 
 sT = sensor_T(None)
 
@@ -13,7 +16,7 @@ with open('data.csv','w') as f:
 
     for i in range(0,25,5):
         T = sT.read()
-        print(i,T)
+        print(i,T,F(T))
         f.write(f"{i},{T}\n")
 
 
