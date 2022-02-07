@@ -47,7 +47,7 @@ with open('data.csv','w') as f:
         if T >= 27:
             ledPix.twoColors(16, col1=(225, 0, 0), col2=(0, 0, 0))
 
-         if T >= 28:
+        if T >= 28:
             ledPix.twoColors(18, col1=(225, 0, 0), col2=(0, 0, 0))
 
         if T >= 29:
