@@ -25,7 +25,7 @@ with open('data.csv','w') as f:
 
         if T <= 20:
             ledPix.setColor((0, 0, 255))
-            ledPix.twoColors(n, col1=(0,0,255), col2=(0,0,0)):
+            ledPix.twoColors(n, col1=(0,0,255), col2=(0,0,0))
         elif T >= 25:
             ledPix.setColor((255, 0, 0,))
         else:
