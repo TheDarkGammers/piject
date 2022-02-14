@@ -15,6 +15,8 @@ sT = sensor_T(None)
 
 ledPix = ledPixels(20, board.D18)
 
+ledPix.setColor((0, 0, 0,))
+
 with open('data.csv','w') as f:
 
     for i in range(0,25,5):
