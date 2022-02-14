@@ -20,7 +20,7 @@ with open('data.csv','w') as f:
     for i in range(0,25,5):
         T = sT.read()
         print(i,T,F(T))
-        f.write(f"{i},{T}\n")
+        f.write(f"{i},{T}{F(T)}\n")
 
 
         if T <= 12:
