@@ -19,7 +19,7 @@ ledPix = ledPixels(20, board.D18)
 
 with open('data.csv','w') as f:
     f.write(datetime.now())
-    while True;
+    while True:
         T = sT.read()
         print(i,T,F(T))
         f.write(f"{i},{T}{F(T)}\n")
