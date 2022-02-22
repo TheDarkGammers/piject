@@ -10,7 +10,7 @@ def F(T):
 
 
 
-
+dt = 5
 
 sT = sensor_T(None)
 
@@ -20,10 +20,11 @@ ledPix = ledPixels(20, board.D18)
 with open('data.csv','w') as f:
     d = datetime.now()
     f.write(d.isoformat()+ " " + d.ctime())
+    i = 0
     while True:
         T = sT.read()
         print(i,T,F(T))
-        f.write(f"{i},{T}{F(T)}\n")
+        f.write(f"{i*dt},{T}{F(T)}\n")
 
 
         if T <= 19:
@@ -32,8 +33,8 @@ with open('data.csv','w') as f:
             ledPix.twoColors(20, col1=(255, 0, 0), col2=(0,0,0))
         else:
             ledPix.twoColors(12, col1=(255, 40, 0), col2=(0,0,0))
-        time.sleep(5)
-
+        time.sleep(dt)
+        i = i + 1
 
 ledPix.setColor((0, 0, 0,))
 print("done")
