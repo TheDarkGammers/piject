@@ -18,7 +18,8 @@ ledPix = ledPixels(20, board.D18)
 
 
 with open('data.csv','w') as f:
-    f.write(datetime.now())
+    d = datetime.now()
+    f.write(d.isoformat()+ " " + d.ctime())
     while True:
         T = sT.read()
         print(i,T,F(T))
