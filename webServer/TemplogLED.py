@@ -24,7 +24,7 @@ with open('data.csv','w') as f:
     while True:
         T = sT.read()
         print(i,T,F(T))
-        f.write(f"{i*dt},{T}{F(T)}\n")
+        f.write(f"{i*dt},{T},{F(T)}\n")
 
 
         if T <= 19:
