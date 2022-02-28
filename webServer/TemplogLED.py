@@ -4,13 +4,18 @@ import time
 import neopixel
 from ledPixels import *
 from datetime import datetime
+import argparse
+
+
 
 def F(T):
      return T*9/5+32
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--dt", default=5, type=float, help = "Time Step")
 
 
 
-dt = 5
+#dt = 5
 
 sT = sensor_T(None)
 
