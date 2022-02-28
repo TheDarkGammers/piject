@@ -15,7 +15,7 @@ parser.add_argument("-t", "--dt", default=5, type=float, help = "Time Step")
 
 
 
-#dt = 5
+dt = args.dt
 
 sT = sensor_T(None)
 
