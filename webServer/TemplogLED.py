@@ -26,7 +26,7 @@ with open('data.csv','w') as f:
     d = datetime.now()
     f.write(d.isoformat()+ " " + d.ctime())
     i = 0
-    while True:
+    for i in range (5):
         T = sT.read()
         print(i,T,F(T))
         f.write(f"{i*dt}, {T}, {F(T)}\n")
