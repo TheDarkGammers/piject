@@ -23,12 +23,13 @@ ledPix = ledPixels(20, board.D18)
 
 
 d = datetime.now()
-f.write(d.isoformat()+ " " + d.ctime())
+with open('data2.csv','w') as f:
+    f.write(d.isoformat()+ " " + d.ctime())
 i = 0
 for i in range (264):
     T = sT.read()
     print(i,T,F(T))
-    with open('data2.csv','w') as f:
+    with open('data2.csv','a') as f:
         f.write(f"{i*dt}, {T}, {F(T)}\n")
 
 
